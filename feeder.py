@@ -14,7 +14,7 @@ def get_redis():
 
 def send_mac(client, maclist):
     payload = ','.join(maclist)
-    client.setex('incubator_pamela', payload, timedelta(minutes=5))
+    client.setex('incubator_pamela', timedelta(minutes=5), payload)
 
 
 def get_mac(*interfaces):
