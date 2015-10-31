@@ -14,4 +14,4 @@ To configure pamela-feeder, you may override configuration options from `config.
 
 ## Technical details
 
-A string containing MAC addresses separated by a `,` are stored in a key named `incubator_pamela` with a TTL of 5m
+A string containing MAC addresses separated by a comma is stored in a key named `incubator_pamela` with a TTL of 5m
