@@ -1,8 +1,9 @@
 from redis import StrictRedis
-from config import REDIS_HOST, REDIS_PORT, INTERFACES
+from config import REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD
 import subprocess
 import re
 from datetime import timedelta
+import time
 
 ARP_REGEX = r"(?P<host>^\S+) \((?P<ip>(\d{1,3}\.){3}\d{1,3})\) at (?P<mac>((\d|[a-f]){2}:){5}(\d|[a-f]){2}) \[\w+\] on (?P<interface>\S+)$"
 ARP_REGEX = re.compile(ARP_REGEX)
@@ -37,6 +38,7 @@ def get_mac(*interfaces):
 if __name__ == '__main__':
     client = get_redis()
     while True:
-        macdict = get_mac(INTERFACES)
+        macdict = get_mac(*INTERFACES)
         maclist = [x['mac'] for x in macdict]
         send_mac(client, maclist)
+        time.sleep(PERIOD)
