@@ -1,8 +1,7 @@
 from redis import StrictRedis
-from config import REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD
+from config import REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD, EXPIRATION
 import subprocess
 import re
-from datetime import timedelta
 from periodic import periodic
 
 ARP_REGEX = r"(?P<host>^\S+) \((?P<ip>(\d{1,3}\.){3}\d{1,3})\) at (?P<mac>((\d|[a-f]){2}:){5}(\d|[a-f]){2}) \[\w+\] on (?P<interface>\S+)$"
@@ -15,7 +14,7 @@ def get_redis():
 
 def send_mac(client, maclist):
     payload = ','.join(maclist)
-    client.setex('incubator_pamela', timedelta(minutes=5), payload)
+    client.setex('incubator_pamela', EXPIRATION, payload)
 
 
 def get_mac(*interfaces):
@@ -38,6 +37,7 @@ def get_mac(*interfaces):
 
 @periodic(PERIOD)
 def main(client):
+    client.set("incubator_pamela_expiration", EXPIRATION)
     macdict = get_mac(*INTERFACES)
     maclist = [x['mac'] for x in macdict]
     send_mac(client, maclist)
