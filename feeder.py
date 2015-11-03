@@ -37,11 +37,11 @@ def get_mac(*interfaces):
 
 @periodic(PERIOD)
 def main(client):
-    client.set("incubator_pamela_expiration", EXPIRATION)
     macdict = get_mac(*INTERFACES)
     maclist = [x['mac'] for x in macdict]
     send_mac(client, maclist)
 
 if __name__ == '__main__':
     client = get_redis()
+    client.set("incubator_pamela_expiration", EXPIRATION)
     main(client)
