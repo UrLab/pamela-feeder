@@ -1,8 +1,10 @@
 from redis import StrictRedis
-from config import REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD, EXPIRATION
+from config import (REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD, EXPIRATION,
+                    INFLUX_HOST)
 import subprocess
 import re
 from periodic import periodic
+import requests
 
 ARP_REGEX = r"(?P<host>^\S+) \((?P<ip>(\d{1,3}\.){3}\d{1,3})\) at (?P<mac>((\d|[a-f]){2}:){5}(\d|[a-f]){2}) \[\w+\] on (?P<interface>\S+)$"
 ARP_REGEX = re.compile(ARP_REGEX)
@@ -15,6 +17,10 @@ def get_redis():
 def send_mac(client, maclist):
     payload = ','.join(maclist)
     client.setex('incubator_pamela', EXPIRATION, payload)
+    if INFLUX_HOST:
+        r = requests.post(INFLUX_HOST,
+                          data='mac_count value={}'.format(len(maclist)),
+                          headers={'Accept-encoding': 'identity'})
 
 
 def get_mac(*interfaces):
