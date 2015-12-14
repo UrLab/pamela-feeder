@@ -4,6 +4,7 @@ from config import (REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD, EXPIRATION,
 import subprocess
 import re
 from periodic import periodic
+from datetime import datetime
 import requests
 
 ARP_REGEX = r"(?P<host>^\S+) \((?P<ip>(\d{1,3}\.){3}\d{1,3})\) at (?P<mac>((\d|[a-f]){2}:){5}(\d|[a-f]){2}) \[\w+\] on (?P<interface>\S+)$"
@@ -18,9 +19,12 @@ def send_mac(client, maclist):
     payload = ','.join(maclist)
     client.setex('incubator_pamela', EXPIRATION, payload)
     if INFLUX_HOST:
-        r = requests.post(INFLUX_HOST,
-                          data='mac_count value={}'.format(len(maclist)),
-                          headers={'Accept-encoding': 'identity'})
+        try:
+            r = requests.post(INFLUX_HOST,
+                              data='mac_count value={}'.format(len(maclist)),
+                              headers={'Accept-encoding': 'identity'})
+        except:
+            print(datetime.now(), "Error when sending people count to influx")
 
 
 def get_mac(*interfaces):
