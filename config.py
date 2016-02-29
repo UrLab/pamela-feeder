@@ -1,6 +1,6 @@
 REDIS_HOST = 'rainbowdash.lan'
 REDIS_PORT = 6379
-INTERFACES = ['eth0']
+INTERFACES = ['lan']
 PERIOD = 30
 EXPIRATION = 300
 INFLUX_HOST = ""
