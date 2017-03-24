@@ -92,12 +92,12 @@ def format_host(host):
     host = strip_prefix(host, "pc-")
     host = strip_prefix(host, "PC-")
 
-    if host.startswith("android"):
-        match = re.match(ANDROID_REGEX, host)
-        if match:
-            host = "unknown-android"
-        else:
-            host = strip_prefix(host, "android-")
+    # if host.startswith("android"):
+    #     match = re.match(ANDROID_REGEX, host)
+    #     if match:
+    #         host = "unknown-android"
+    #     else:
+    #         host = strip_prefix(host, "android-")
     return host
 
 
