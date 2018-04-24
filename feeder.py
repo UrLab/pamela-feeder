@@ -91,6 +91,9 @@ def format_host(host):
 
     host = strip_prefix(host, "pc-")
     host = strip_prefix(host, "PC-")
+    
+    host = strip_prefix(host, "LAPTOP-")
+    host = strip_prefix(host, "iPod-de-")
 
     # if host.startswith("android"):
     #     match = re.match(ANDROID_REGEX, host)
