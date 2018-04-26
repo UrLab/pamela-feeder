@@ -108,7 +108,7 @@ def format_host(host):
 def main(client):
     macdicts = get_mac(*INTERFACES)
 
-    maclist = [x['mac'] for x in macdicts]
+    maclist = list({x['mac'] for x in macdicts})
     send_mac(client, maclist)
 
     hostnames = {x['mac']: format_host(x['host']) for x in macdicts if is_host(x['host'])}
