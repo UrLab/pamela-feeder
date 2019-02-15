@@ -1,10 +1,12 @@
 from redis import StrictRedis
+from redis.exceptions import ConnectionError
 from config import (REDIS_HOST, REDIS_PORT, INTERFACES, PERIOD, EXPIRATION,
                     INFLUX_HOST, MOCK)
 import subprocess
 import re
 from periodic import periodic
 from datetime import datetime
+from time import sleep
 import requests
 
 ARP_REGEX = r"(?P<host>^\S+) \((?P<ip>(\d{1,3}\.){3}\d{1,3})\) at (?P<mac>((\d|[a-f]){2}:){5}(\d|[a-f]){2}) \[\w+\] on (?P<interface>\S+)$"
@@ -115,6 +117,11 @@ def main(client):
     send_hostnames(client, hostnames)
 
 if __name__ == '__main__':
-    client = get_redis()
-    client.set("incubator_pamela_expiration", EXPIRATION)
-    main(client)
+    while True:
+        try:
+            client = get_redis()
+            client.set("incubator_pamela_expiration", EXPIRATION)
+            main(client)
+        except ConnectionError as e:
+            print("Connection error: " + str(e))
+            sleep(30*60)
